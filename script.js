@@ -1,6 +1,6 @@
 const API_URL = "https://vibe-proxy-gqv4.onrender.com/v1/chat/completions";
 const API_KEY = "sk-vibe-summer-2026";
-const mysteryEmojis = ["🔍", "🎩", "🕶️", "🕯️", "🧭", "🦇"];
+const mysteryEmojis = ["🔍", "🎩", "🕶️", "🕯️", "🧭", "🦇", "🕷️", "💀", "🧩"];
 
 const mysteryPrompts = [
   "A famous violinist is found dead in a locked music room, and the final note of a melody points to a hidden culprit.",
@@ -49,6 +49,7 @@ const mysteryIconToggle = document.getElementById("toggleMysteryIcon");
 function init() {
   renderPromptButtons();
   renderCaseList();
+  createMysteryDecor();
   setActivePrompt(mysteryPrompts[0]);
   renderPersonalityOptions();
   renderSelectedTraits();
@@ -424,14 +425,45 @@ async function fetchFromLlm(prompt, label) {
   }
 }
 
+function createMysteryDecor() {
+  const layer = document.getElementById("mysteryEmojisLayer");
+  if (!layer) return;
+
+  const icons = ["🕵️", "🦇", "🕯️", "🧭", "🧩", "💀", "🕶️", "🎩"];
+  for (let i = 0; i < 12; i += 1) {
+    const item = document.createElement("span");
+    item.className = "mystery-emoji";
+    item.textContent = icons[i % icons.length];
+    item.style.left = `${Math.random() * 96}%`;
+    item.style.top = `${Math.random() * 82}%`;
+    item.style.animationDelay = `${(i % 6) * 0.8}s`;
+    layer.appendChild(item);
+  }
+}
+
 function toggleMysteryIcon() {
   const icon = mysteryIconToggle.querySelector("span");
   state.mysteryIconIndex = (state.mysteryIconIndex + 1) % mysteryEmojis.length;
+  mysteryIconToggle.classList.remove("glitching");
+  void mysteryIconToggle.offsetWidth;
+  mysteryIconToggle.classList.add("glitching");
   icon.textContent = mysteryEmojis[state.mysteryIconIndex];
   icon.style.transform = "rotate(180deg)";
   setTimeout(() => {
     icon.style.transform = "rotate(0deg)";
   }, 320);
+
+  const burst = document.createElement("span");
+  burst.className = "mystery-emoji";
+  burst.textContent = mysteryEmojis[state.mysteryIconIndex];
+  burst.style.left = `${Math.random() * 70 + 15}%`;
+  burst.style.top = `${Math.random() * 40 + 20}%`;
+  burst.style.fontSize = "2.5rem";
+  burst.style.opacity = "0.9";
+  burst.style.animation = "floatEmoji 1.2s ease-in-out forwards";
+  document.getElementById("mysteryEmojisLayer").appendChild(burst);
+
+  setTimeout(() => burst.remove(), 1200);
 }
 
 init();
