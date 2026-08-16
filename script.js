@@ -106,12 +106,13 @@ function renderPromptButtons() {
 function renderCaseList() {
   const container = document.getElementById("caseSidebarList");
   container.innerHTML = "";
+  const caseEmojis = ["🎻", "⚡", "🕯️", "💍", "🚂"];
 
   mysteryPrompts.forEach((prompt, index) => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "case-sidebar-item" + (index === 0 ? " active" : "");
-    btn.textContent = `Case ${index + 1}`;
+    btn.textContent = `${caseEmojis[index]} Case ${index + 1}`;
     btn.addEventListener("click", () => {
       setActivePrompt(prompt);
     });
@@ -229,7 +230,15 @@ function saveSelectedPersonality() {
 function appendTrace(step) {
   const item = document.createElement("li");
   item.className = "trace-item";
-  item.innerHTML = `<strong>${step.title}</strong><br>${step.detail}`;
+  const traceEmojis = { "Detective": "🕵️", "Forensics": "🔬", "Interrogator": "🧠", "Orchestrator": "🎯", "System": "⚙️" };
+  let emoji = "→";
+  for (const key in traceEmojis) {
+    if (step.title.includes(key)) {
+      emoji = traceEmojis[key];
+      break;
+    }
+  }
+  item.innerHTML = `<span style="color: #ff5ec4; font-weight: bold; margin-right: 6px;">${emoji}</span><strong>${step.title}</strong><br>${step.detail}`;
   workflowTrace.appendChild(item);
 }
 
@@ -237,9 +246,11 @@ function appendOutput(agentName, content) {
   const card = document.createElement("article");
   card.className = "agent-output";
   const label = agentName.charAt(0).toUpperCase() + agentName.slice(1);
+  const badges = { detective: "🕵️", forensics: "🔬", interrogator: "🧠", orchestrator: "🎯" };
+  const badgeEmoji = badges[agentName] || "✨";
   card.innerHTML = `
     <div class="output-head">
-      <span class="output-badge">${label}</span>
+      <span class="output-badge">${badgeEmoji} ${label}</span>
       <span class="status-dot">✓</span>
     </div>
     <p class="output-body">${content}</p>
